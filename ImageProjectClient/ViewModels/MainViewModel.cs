@@ -20,7 +20,7 @@ namespace ImageProjectClient.ViewModels
         public RelayCommand ChooseImageCommand { get; set; }
         public RelayCommand SendToServerCommand { get; set; }
 
-
+        public bool IsConnected { get; set; }
         public string IP_Address { get; set; }
 
 
@@ -85,7 +85,7 @@ namespace ImageProjectClient.ViewModels
                 }
                 ChooseImageButton.IsEnabled = true;
                 SendToServer.IsEnabled = true;
-                //Commit2
+                ////Commit2
 
             });
 
@@ -103,14 +103,13 @@ namespace ImageProjectClient.ViewModels
                 var ep = new IPEndPoint(ipAddress, port);
                 try
                 {
-                    socket.Connect(ep);
-                    if (socket.Connected)
+                    if (IsConnected == false)
                     {
-
-
-
-
-
+                        socket.Connect(ep);
+                        IsConnected = true;
+                    }
+                    if (IsConnected == true)
+                    {
                         Uri imageUri = new Uri(MyImageSource, UriKind.Relative);
                         BitmapImage imageBitmap = new BitmapImage(imageUri);
                         ImageBrush image = new ImageBrush();
@@ -121,11 +120,14 @@ namespace ImageProjectClient.ViewModels
                         socket.Send(bytes);
 
 
-
-
-
-
                     }
+
+
+
+
+
+
+
                 }
                 catch (Exception)
                 {
