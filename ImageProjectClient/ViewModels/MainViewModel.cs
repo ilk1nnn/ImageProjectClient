@@ -103,13 +103,30 @@ namespace ImageProjectClient.ViewModels
                 var ep = new IPEndPoint(ipAddress, port);
                 try
                 {
-                    if (IsConnected == false)
+                    //if (IsConnected == false)
+                    //{
+                    //    socket.Connect(ep);
+                    //    IsConnected = true;
+                    //}
+                    //if (IsConnected == true)
+                    //{
+                    //    Uri imageUri = new Uri(MyImageSource, UriKind.Relative);
+                    //    BitmapImage imageBitmap = new BitmapImage(imageUri);
+                    //    ImageBrush image = new ImageBrush();
+                    //    image.ImageSource = imageBitmap;
+
+
+                    //    var bytes = BitmapImagetoByteArray(imageBitmap);
+                    //    socket.Send(bytes);
+
+
+                    //}
+
+
+                    socket.Connect(ep);
+                    if (socket.Connected)
                     {
-                        socket.Connect(ep);
-                        IsConnected = true;
-                    }
-                    if (IsConnected == true)
-                    {
+
                         Uri imageUri = new Uri(MyImageSource, UriKind.Relative);
                         BitmapImage imageBitmap = new BitmapImage(imageUri);
                         ImageBrush image = new ImageBrush();
@@ -118,8 +135,6 @@ namespace ImageProjectClient.ViewModels
 
                         var bytes = BitmapImagetoByteArray(imageBitmap);
                         socket.Send(bytes);
-
-
                     }
 
 
