@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -61,7 +62,71 @@ namespace ImageProjectClient.ViewModels
             return data;
         }
 
+        public void Function()
+        {
+            string hostName = Dns.GetHostName(); // Retrive the Name of HOST
+            Console.WriteLine(hostName);
+            // Get the IP
+            string myIP = Dns.GetHostByName(hostName).AddressList[0].ToString();
+            IP_Address = myIP;
+            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            var ipAddress = IPAddress.Parse($"{IP_Address}"); // Change IP
+            var port = 27001; // doesn't work, use 80;
+            var ep = new IPEndPoint(ipAddress, port);
+            try
+            {
+                //if (IsConnected == false)
+                //{
+                //    socket.Connect(ep);
+                //    IsConnected = true;
+                //}
+                //if (IsConnected == true)
+                //{
+                //    Uri imageUri = new Uri(MyImageSource, UriKind.Relative);
+                //    BitmapImage imageBitmap = new BitmapImage(imageUri);
+                //    ImageBrush image = new ImageBrush();
+                //    image.ImageSource = imageBitmap;
 
+
+                //    var bytes = BitmapImagetoByteArray(imageBitmap);
+                //    socket.Send(bytes);
+
+
+                //}
+
+
+                socket.Connect(ep);
+                Task.Run(() =>
+                {
+
+                    if (socket.Connected)
+                    {
+
+                        Uri imageUri = new Uri(MyImageSource, UriKind.Relative);
+                        BitmapImage imageBitmap = new BitmapImage(imageUri);
+                        ImageBrush image = new ImageBrush();
+                        image.ImageSource = imageBitmap;
+
+
+                        var bytes = BitmapImagetoByteArray(imageBitmap);
+                        socket.Send(bytes);
+                    }
+                });
+
+
+
+
+
+
+
+
+
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Can not connect to server,please try again . . . .");
+            }
+        }
         public MainViewModel()
         {
             ConnectCommand = new RelayCommand(c =>
@@ -92,66 +157,8 @@ namespace ImageProjectClient.ViewModels
 
             SendToServerCommand = new RelayCommand(s =>
             {
-                string hostName = Dns.GetHostName(); // Retrive the Name of HOST
-                Console.WriteLine(hostName);
-                // Get the IP
-                string myIP = Dns.GetHostByName(hostName).AddressList[0].ToString();
-                IP_Address = myIP;
-                var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                var ipAddress = IPAddress.Parse($"{IP_Address}"); // Change IP
-                var port = 27001; // doesn't work, use 80;
-                var ep = new IPEndPoint(ipAddress, port);
-                try
-                {
-                    //if (IsConnected == false)
-                    //{
-                    //    socket.Connect(ep);
-                    //    IsConnected = true;
-                    //}
-                    //if (IsConnected == true)
-                    //{
-                    //    Uri imageUri = new Uri(MyImageSource, UriKind.Relative);
-                    //    BitmapImage imageBitmap = new BitmapImage(imageUri);
-                    //    ImageBrush image = new ImageBrush();
-                    //    image.ImageSource = imageBitmap;
-
-
-                    //    var bytes = BitmapImagetoByteArray(imageBitmap);
-                    //    socket.Send(bytes);
-
-
-                    //}
-
-
-                    socket.Connect(ep);
-                    Task.Run(() =>
-                    {
-
-                        if (socket.Connected)
-                        {
-
-                            Uri imageUri = new Uri(MyImageSource, UriKind.Relative);
-                            BitmapImage imageBitmap = new BitmapImage(imageUri);
-                            ImageBrush image = new ImageBrush();
-                            image.ImageSource = imageBitmap;
-
-
-                            var bytes = BitmapImagetoByteArray(imageBitmap);
-                            socket.Send(bytes);
-                        }
-                    });
-
-
-
-
-
-
-
-                }
-                catch (Exception)
-                {
-                    MessageBox.Show("Can not connect to server,please try again . . . .");
-                }
+                Thread thread = new Thread(() => { Function(); });
+                thread.Start();
             });
             //n
 
