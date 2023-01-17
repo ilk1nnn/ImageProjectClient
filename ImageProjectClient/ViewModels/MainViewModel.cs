@@ -96,22 +96,23 @@ namespace ImageProjectClient.ViewModels
 
 
                 socket.Connect(ep);
-                Task.Run(() =>
-                {
-
-                    if (socket.Connected)
+               
+                    Task.Run(() =>
                     {
 
-                        Uri imageUri = new Uri(MyImageSource, UriKind.Relative);
-                        BitmapImage imageBitmap = new BitmapImage(imageUri);
-                        ImageBrush image = new ImageBrush();
-                        image.ImageSource = imageBitmap;
+                        if (socket.Connected)
+                        {
+
+                            Uri imageUri = new Uri(MyImageSource, UriKind.Relative);
+                            BitmapImage imageBitmap = new BitmapImage(imageUri);
+                            ImageBrush image = new ImageBrush();
+                            image.ImageSource = imageBitmap;
 
 
-                        var bytes = BitmapImagetoByteArray(imageBitmap);
-                        socket.Send(bytes);
-                    }
-                });
+                            var bytes = BitmapImagetoByteArray(imageBitmap);
+                            socket.Send(bytes);
+                        }
+                    });
 
 
 
@@ -157,8 +158,7 @@ namespace ImageProjectClient.ViewModels
 
             SendToServerCommand = new RelayCommand(s =>
             {
-                Thread thread = new Thread(() => { Function(); });
-                thread.Start();
+                Function();
             });
             //n
 
