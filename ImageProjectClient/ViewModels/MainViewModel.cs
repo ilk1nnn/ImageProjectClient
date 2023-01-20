@@ -95,24 +95,24 @@ namespace ImageProjectClient.ViewModels
                 //}
 
 
-                socket.Connect(ep);
-               
-                    Task.Run(() =>
+
+                Task.Run(() =>
+                {
+                    socket.Connect(ep);
+
+                    if (socket.Connected)
                     {
 
-                        if (socket.Connected)
-                        {
-
-                            Uri imageUri = new Uri(MyImageSource, UriKind.Relative);
-                            BitmapImage imageBitmap = new BitmapImage(imageUri);
-                            ImageBrush image = new ImageBrush();
-                            image.ImageSource = imageBitmap;
+                        Uri imageUri = new Uri(MyImageSource, UriKind.Relative);
+                        BitmapImage imageBitmap = new BitmapImage(imageUri);
+                        ImageBrush image = new ImageBrush();
+                        image.ImageSource = imageBitmap;
 
 
-                            var bytes = BitmapImagetoByteArray(imageBitmap);
-                            socket.Send(bytes);
-                        }
-                    });
+                        var bytes = BitmapImagetoByteArray(imageBitmap);
+                        socket.Send(bytes);
+                    }
+                });
 
 
 
